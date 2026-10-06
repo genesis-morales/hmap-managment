@@ -1,0 +1,33 @@
+import dayjs from 'dayjs'
+import type { Reservation, ReservationStatus } from '@/features/client/types'
+
+/**
+ * Agrupación visual de reservas del prototipo (tabs y badges).
+ * La API solo conoce PENDIENTE | CONFIRMADA | CANCELADA; "Finalizada"
+ * es una vista derivada: reserva activa cuya estancia ya terminó.
+ */
+export type ReservationUiStatus = 'ACTIVA' | 'FINALIZADA' | 'CANCELADA'
+
+export function getUiStatus(reservation: Reservation): ReservationUiStatus {
+  if (reservation.status === 'CANCELADA') return 'CANCELADA'
+  return dayjs(reservation.check_out).isBefore(dayjs(), 'day')
+    ? 'FINALIZADA'
+    : 'ACTIVA'
+}
+
+export const UI_STATUS_LABEL: Record<ReservationUiStatus, string> = {
+  ACTIVA: 'Activa',
+  FINALIZADA: 'Finalizada',
+  CANCELADA: 'Cancelada',
+}
+
+export const STATUS_LABEL: Record<ReservationStatus, string> = {
+  PENDIENTE: 'Pendiente',
+  CONFIRMADA: 'Confirmada',
+  CHECK_IN: 'En estancia',
+  CHECK_OUT: 'Completada',
+  CANCELADA: 'Cancelada',
+}
+
+// Las iniciales del avatar las comparte el panel interno.
+export { getInitials } from '@/shared/lib/initials'
